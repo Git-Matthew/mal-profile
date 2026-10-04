@@ -15,7 +15,7 @@ Rebuilds the MyAnimeList "About Me" image from config.json.
 Needs: Python 3.8+, Pillow (pip install pillow), and any Chromium-based browser
 (Chrome, Edge, Chromium, or Playwright's Chromium). Set CHROME_PATH to force one.
 """
-import argparse, datetime, glob, html, json, os, re, shutil, subprocess, sys, time
+import argparse, datetime, glob, html, json, math, os, re, shutil, subprocess, sys, time
 import urllib.parse, urllib.request
 from pathlib import Path
 from string import Template
@@ -201,7 +201,7 @@ def card(rank, img_path, caption, cls):
             f'<img src="{img_path.as_uri()}"><div class="sheen"></div></div><div class="cap">{esc(caption)}</div></div>')
 
 
-def build_html(cfg, stats, posters):
+def build_html(cfg, stats, posters, poster_h=None, fill_h=None):
     ch = cfg["character"]
     img_path = (ROOT / ch["image"]).resolve()
     w, h = Image.open(img_path).size
@@ -211,7 +211,8 @@ def build_html(cfg, stats, posters):
         sys.exit("Max 5 anime and 5 manga (a 6th won't fit the 798px width).")
     mode = "side" if len(manga) <= 3 else "full"
     hero_h = 250 if mode == "side" else 236
-    poster_h = 198 if mode == "side" else 184
+    if poster_h is None:                   # fixed sizes when not filling to the max height
+        poster_h = 198 if mode == "side" else 184
     band_top = HEADER_H + hero_h
 
     hd = cfg["header"]
@@ -235,7 +236,7 @@ def build_html(cfg, stats, posters):
         rows.append((esc(r["label"]), v, sfx))
     anime_cards = "\n".join(card(i + 1, posters[("anime", a["mal_id"])], a["caption"], "card") for i, a in enumerate(anime))
     if mode == "side":
-        mcards = "\n".join(card(i + 1, posters[("manga", m["mal_id"])], m["caption"], "mcard") for i, m in enumerate(manga))
+        mcards = "\n".join(card(i + 1, posters[("manga", m["mal_id"])], m["caption"], "card") for i, m in enumerate(manga))
         srows = "\n".join(f'            <div class="srow"><span class="k">{k}</span><span class="v">{v}{s}</span></div>' for k, v, s in rows)
         manga_block = (f'      <div class="mrow">\n{mcards}\n        <div class="statcard">\n'
                        f'          <div class="sh">{esc(st["title"])}</div>\n          <div class="stars">{"★" * st.get("stars", 5)}</div>\n'
@@ -260,12 +261,14 @@ def build_html(cfg, stats, posters):
         theme_classes += " stats-ink"      # white stats box only: black labels instead of gray
     if str(th.get("captions", "gray")).lower() == "black":
         theme_classes += " caps-ink"       # titles under the covers in black instead of gray
+    if fill_h:
+        theme_classes += " fill"           # card is exactly fill_h tall (see fit_poster_height)
 
     fs, c = cfg["favorites_section"], cfg["colors"]
     tpl = Template((ROOT / "template" / "profile_template.html").read_text(encoding="utf-8"))
     return tpl.substitute(
         FONT_FACES=font_faces(), INK=c["ink"], GOLD=c["gold"], BLUE=c["blue"], GREEN=c["green"],
-        POSTER_H=poster_h, HERO_H=hero_h, BAND_TOP=band_top, MODE=mode, THEME_CLASSES=theme_classes,
+        POSTER_H=f"{poster_h:g}", DOC_H=fill_h or 0, HERO_H=hero_h, BAND_TOP=band_top, MODE=mode, THEME_CLASSES=theme_classes,
         CLIP=f"polygon(0 0,100% 0,100% {band_top}px,0 {band_top}px)",
         CHAR_SRC=img_path.as_uri(), CHAR_H=ch["height_px"], CHAR_TOP=ch["top_px"], CHAR_RIGHT=ch["right_px"],
         CREST=esc(hd["crest_kanji"]), HEADER_TITLE=esc(hd["title"]), HEADER_NUMBER=esc(hd["number"]), HEADER_STARS_HTML=stars_html,
@@ -310,6 +313,48 @@ def render(html_path, png_path):
     return im.size
 
 
+MEASURE_JS = ("<script>addEventListener('load',()=>document.fonts.ready.then(()=>document.body.setAttribute("
+              "'data-doc-h',document.querySelector('.doc').getBoundingClientRect().height)))</script>")
+
+
+def measure_height(html_text):
+    """Natural height (CSS px) of the design, measured in the same headless browser that renders it."""
+    probe = ROOT / "output" / "_measure.html"
+    probe.write_text(html_text.replace("</body>", MEASURE_JS + "</body>"), encoding="utf-8")
+    try:
+        r = subprocess.run([find_browser(), "--headless=new", "--disable-gpu", "--no-sandbox", "--allow-file-access-from-files",
+                            "--hide-scrollbars", "--force-device-scale-factor=2", "--window-size=798,1200",
+                            "--virtual-time-budget=8000", "--dump-dom", probe.as_uri()],
+                           capture_output=True, text=True, timeout=180)
+    finally:
+        probe.unlink(missing_ok=True)
+    m = re.search(r'data-doc-h="([0-9.]+)"', r.stdout)
+    if not m:
+        sys.exit("Couldn't measure the layout in the browser (needed to size the posters to the max height).")
+    return float(m.group(1))
+
+
+def fit_poster_height(cfg, stats, posters, target):
+    """One poster height for every cover that makes the whole image exactly `target` px tall."""
+    p = 200.0
+    h = measure_height(build_html(cfg, stats, posters, p)[0])
+    slope = 2.0                                   # two rows of covers grow with the poster height
+    for _ in range(5):
+        if abs(h - target) < 0.02:
+            break
+        p2 = p + (target - h) / slope
+        h2 = measure_height(build_html(cfg, stats, posters, p2)[0])
+        if abs(p2 - p) > 1e-6 and abs(h2 - h) > 1e-6:
+            slope = (h2 - h) / (p2 - p)
+        p, h = p2, h2
+    p = math.floor(p * 2) / 2                     # whole device pixels at 2x -> crisp poster edges
+    while measure_height(build_html(cfg, stats, posters, p)[0]) > target + 0.25:
+        p -= 0.5                                  # never taller than the max (MAL would add "Read More")
+    if p < 150:
+        print(f"! WARNING: covers can only be {p:g}px tall to fit {target}px. Shorten captions or drop a stats row.")
+    return p
+
+
 # ----------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description="Rebuild the MAL About Me image from config.json")
@@ -348,9 +393,14 @@ def main():
             posters[(kind, item["mal_id"])] = poster(kind, item["mal_id"], a.refresh_posters, a.offline)
     print(f"  posters ready: {len(posters)}")
 
-    html_text, mode = build_html(cfg, stats, posters)
     out = ROOT / "output"
     out.mkdir(exist_ok=True)
+    fill_h = cfg["output"].get("max_height_px", 1000) if cfg["output"].get("fill_to_max_height") else None
+    poster_h = None
+    if fill_h and not a.no_render:
+        poster_h = fit_poster_height(cfg, stats, posters, fill_h)
+        print(f"  covers sized to {poster_h:g}px tall (all the same) so the image is exactly {fill_h}px tall")
+    html_text, mode = build_html(cfg, stats, posters, poster_h, fill_h if poster_h else None)
     html_path = out / "profile.html"
     html_path.write_text(html_text, encoding="utf-8")
     (out / "about_me_bbcode.txt").write_text(

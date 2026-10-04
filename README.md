@@ -103,7 +103,7 @@ Useful commands:
 - **Stats rows:** `stats.rows` (pick from the value keys listed in the file). Counting rules live in `stats.rules` (currently: anime = completed only; manga volumes = completed + reading).
 - **New character art:** drop a transparent PNG in `assets/character/`, point `character.image` at it, then tweak `height_px` / `top_px` / `right_px`. The name tag auto-moves to the art's left edge (set `name_tag.enabled` false if the new art doesn't need it).
 
-Limits to respect: the image must stay **≤ 1000px tall** (MAL folds the rest behind "Read More") and **798px wide** (MAL's max). The build warns you if you go over.
+Limits: **798px wide** (MAL's max) and **≤ 1000px tall** (MAL folds the rest behind "Read More"). The build sizes the covers automatically so the image is exactly 1000px (`output.fill_to_max_height` in config.json), so a longer caption or an extra stats row just makes the covers a little shorter.
 
 ## Your profile picture
 

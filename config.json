@@ -82,9 +82,10 @@
   },
 
   "colors": {
+    "_note": "blue = MyAnimeList's own blue: the 神 crest kanji, the tip of the name underbar and the ▸ row arrows. The 推し flag uses gold.",
     "ink":   "#15151c",
     "gold":  "#d7a736",
-    "blue":  "#0f6fb8",
+    "blue":  "#2e51a2",
     "green": "#22c55e"
   },
 
@@ -102,6 +103,8 @@
 
   "output": {
     "basename": "mal_profile",
-    "max_height_px": 1000
+    "max_height_px": 1000,
+    "_fill_note": "true = every cover gets the same size and build.py picks their height so the image is exactly max_height_px tall (MAL shows 1000px before 'Read More').",
+    "fill_to_max_height": true
   }
 }
