@@ -27,7 +27,8 @@ ${FONT_FACES}
     background:repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px)}
   .crest{width:38px;height:38px;flex:none;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
     background:#fff;transform:rotate(45deg)}       /* white diamond, MAL-blue kanji */
-  .crest span{transform:rotate(-45deg);font-family:"KitJP";font-weight:900;color:var(--sblue);font-size:18px}
+  /* 神: 25% bigger than the original 18px (Oct 4, 2026); the nudge puts the ink dead centre, ~4px clear of the gold border */
+  .crest span{transform:rotate(-45deg) translate(.5px,-1.6px);font-family:"KitJP";font-weight:900;color:var(--sblue);font-size:22.5px}
   .top .t1{font-family:"KitAnton";font-size:20px;letter-spacing:.14em;line-height:1}
   .top .t2{display:flex;align-items:center;gap:8px;margin-top:5px;font-family:"KitMono";font-size:11px;color:#9aa2b1;letter-spacing:.2em}
   .top .t2 .sep{color:#5d6472}
