@@ -6,7 +6,7 @@ Everything learned the hard way while building this (Oct 2026). Written mainly f
 
 - **About Me Style must be "Classic".** Classic About Me = **BBCode only** (no HTML/CSS). Modern About Me is just a template picker (custom styling is a paid Supporter perk) and is *not* wider — both are ~800px. So a designed profile = a hosted image in `[img]`.
 - Images in the About Me are clamped to **798px wide** (we render at 2× = 1596px for sharpness; MAL scales it down).
-- The About Me box is cut at **1000px tall** behind a "Read More" button → keep the image ≤ 1000px (current: ~950px; 5-manga layout ~984px).
+- The About Me box is cut at **1000px tall** behind a "Read More" button. MAL's page script adds the button only when the content is *taller* than 1000px, so exactly 1000 is safe. With `output.fill_to_max_height` (on), `build.py` measures the layout in the browser and sizes the covers so the image is exactly 1000px (a 1596 × 2000 PNG at 2x).
 - MAL rewrites outside image links to its own proxy (`image.myanimelist.net/ui/<token>`). The proxy just **302-redirects to the original link**, so the original must stay online, and replacing the file at the same link changes what MAL shows. To check which image is live: take the proxy link from the About Me on the public profile page and request it without following redirects — the `Location` header is the real URL.
 - Useful BBCode: `[center]`, `[img]url[/img]`, `[url=link]text or [img][/img][/url]` (clickable), `[size=N]` (percent), `[color=#hex]`, `[spoiler=Label]…[/spoiler]` (dropdown button), `[yt]VIDEO_ID[/yt]` (playable YouTube), animated GIFs work.
 - Profile avatar shows at ~225px wide.
