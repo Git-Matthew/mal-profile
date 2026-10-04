@@ -17,7 +17,7 @@ The whole About Me is **one image** (MAL's Classic About Me only accepts BBCode,
 | Copy | What it's for |
 |---|---|
 | **GitHub repo** `Git-Matthew/mal-profile` | The **live** one. Its daily job builds from it. Change `config.json` / the design **here** for changes to show up. |
-| **This folder** (`Downloads\MAL Profile Kit`) | Backup + extras the repo doesn't need: old versions, your profile picture, cached data. Keep it in sync when something changes. |
+| **This folder** (`Desktop\MAL Profile Kit`, backed up by OneDrive) | Backup + extras the repo doesn't need: old versions, your profile picture, cached data. Keep it in sync when something changes. |
 
 ## The fastest way to change anything
 
