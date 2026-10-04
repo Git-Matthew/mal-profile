@@ -1,0 +1,12 @@
+# Made fresh by every build
+data/
+output/
+assets/posters/
+__pycache__/
+
+# Only kept in the local copy of the kit (personal, or not needed to build)
+local_settings.json
+PROMPT_FOR_NEW_CHAT.md
+versions/
+profile_picture/
+reference/example_5_manga_layout.png

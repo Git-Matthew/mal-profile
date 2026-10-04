@@ -1,0 +1,107 @@
+{
+  "_readme": "Single source of truth for the MAL About Me image. Edit this, then run: python build.py   (see README.md). Keys starting with _ are comments.",
+
+  "_mal_username_note": "Your MAL username is deliberately NOT in this file (the GitHub repo is public). On GitHub it comes from the MAL_USERNAME repo secret; in the local kit from local_settings.json.",
+
+  "header": {
+    "title": "MYANIMELIST",
+    "number": "#0001",
+    "stars": 5,
+    "crest_kanji": "神"
+  },
+
+  "hero": {
+    "_display_name_note": "Leave empty to show your MAL username in capitals.",
+    "display_name": "",
+    "tagline_jp": "神のお気に入り",
+    "tagline_en": "God's Favourite",
+    "status_text": "ACTIVE",
+    "show_mean_score_chip": true
+  },
+
+  "character": {
+    "_note": "Transparent PNG. It rides over the header (sparkles and all) and is clipped where the Favorites bar starts. No effects (no shadow/glow) by request.",
+    "image": "assets/character/satsuki_sparkle.png",
+    "height_px": 490,
+    "top_px": -6,
+    "right_px": -24,
+    "name_tag": {
+      "_note": "Hides the spot where the art's hair runs into the image edge. Auto-positioned on that edge. Text = Kiryuin Satsuki.",
+      "enabled": true,
+      "text_jp": "鬼龍院皐月",
+      "show_star": true,
+      "top_px": 64
+    }
+  },
+
+  "favorites_section": {
+    "flag_jp": "推し",
+    "title": "FAVORITES",
+    "anime_label": "TOP ANIME",
+    "anime_label_jp": "鑑賞記録",
+    "manga_label": "TOP MANGA",
+    "manga_label_jp": "読書記録"
+  },
+
+  "favorites": {
+    "_note": "In rank order. Max 5 anime and 5 manga. 1-3 manga = stats card sits beside them; 4-5 manga = full row + stats strip below. mal_id comes from the MAL URL (myanimelist.net/anime/<id>/...) or: python build.py find \"title\" --type manga",
+    "anime": [
+      { "mal_id": 35120, "caption": "Devilman Crybaby" },
+      { "mal_id": 18679, "caption": "Kill la Kill" },
+      { "mal_id": 39535, "caption": "Mushoku Tensei" },
+      { "mal_id": 32182, "caption": "Mob Psycho 100" },
+      { "mal_id": 37521, "caption": "Vinland Saga" }
+    ],
+    "manga": [
+      { "mal_id": 62887,  "caption": "All You Need Is Kill" },
+      { "mal_id": 99969,  "caption": "My Lesbian Experience with Loneliness" },
+      { "mal_id": 145863, "caption": "Goodbye, Eri" }
+    ]
+  },
+
+  "stats": {
+    "title": "STATS",
+    "stars": 5,
+    "_rules_note": "MAL list status codes: 1=watching/reading, 2=completed, 3=on hold, 4=dropped, 6=plan to watch/read. Matthew's rule: anime counts = completed only; manga volumes = completed + reading; mean = completed scored anime.",
+    "rules": {
+      "anime_statuses": [2],
+      "manga_statuses": [1, 2],
+      "mean_from_statuses": [2]
+    },
+    "_rows_note": "value keys: mean_score, anime_completed, anime_episodes, anime_watching, anime_plan_to_watch, anime_total_entries, manga_volumes, manga_chapters, manga_titles, manga_completed, manga_reading, manga_total_entries",
+    "rows": [
+      { "label": "MEAN SCORE",        "value": "mean_score", "suffix": "/10" },
+      { "label": "ANIME ▸ COMPLETED", "value": "anime_completed" },
+      { "label": "MANGA ▸ VOLUMES",   "value": "manga_volumes" }
+    ]
+  },
+
+  "footer_quote": {
+    "jp": "「恐怖こそ自由！」",
+    "en": "FEAR IS FREEDOM"
+  },
+
+  "colors": {
+    "ink":   "#15151c",
+    "gold":  "#d7a736",
+    "blue":  "#0f6fb8",
+    "green": "#22c55e"
+  },
+
+  "theme": {
+    "_note": "Each piece is \"dark\" (ink background, white text: the original look) or \"light\" (white background, black text). Gold accents stay gold either way.",
+    "header_bar":    "dark",
+    "favorites_bar": "dark",
+    "stats_box":     "light",
+    "footer_bar":    "dark",
+    "_stats_labels_note": "Only for the white (light) stats box: \"gray\" or \"black\" labels.",
+    "stats_labels":  "black",
+    "_captions_note": "Titles under the covers: \"gray\" or \"black\".",
+    "captions":      "black"
+  },
+
+  "output": {
+    "basename": "mal_profile",
+    "max_height_px": 1000
+  }
+}
