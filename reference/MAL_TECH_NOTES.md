@@ -34,7 +34,7 @@ Everything learned the hard way while building this (Oct 2026). Written mainly f
 ### Changing files in the repo (Claude, through his Edge)
 
 The sandbox can't push to his repo (its GitHub access is limited to repos attached to the session). Use the web uploader:
-1. Put the file in the local kit on his PC (`device_commit_files` into `C:\Users\matth\Downloads\MAL Profile Kit\...`), then `device_stage_files` it back → `/mnt/user-data/uploads/Downloads/MAL Profile Kit/...`. *Why:* the browser `file_upload` tool only accepts files staged from his device, not files Claude created in its own folders.
+1. Put the file in the local kit on his PC (`device_commit_files` into `C:\Users\matth\OneDrive\Desktop\MAL Profile Kit\...`, which must be a connected folder), then `device_stage_files` it back → `/mnt/user-data/uploads/MAL Profile Kit/...`. *Why:* the browser `file_upload` tool only accepts files staged from his device, not files Claude created in its own folders.
 2. Open `https://github.com/Git-Matthew/mal-profile/upload/main/<folder>` (works for new folders too; the repo root is `/upload/main`). `find` the "Choose your files" input → `file_upload` (≤ 10 MB per call; call it again on the same page to add more).
 3. Click the commit message box, type a message, press **Enter** (submits). **Wait until it lands back on the repo page** — leaving the "Processing your files…" page early silently drops the commit. Check the commit list afterwards.
 4. Workflow files can be uploaded the same way into `.github/workflows` (from the `github_actions/` copy).
@@ -44,7 +44,7 @@ The sandbox can't push to his repo (its GitHub access is limited to repos attach
 ## Older hosting: imgur (fallback, used until Oct 4, 2026)
 
 Matthew's imgur account (logged in on Edge). Anonymous hosts were rejected or unsafe: from Claude's cloud sandbox, catbox.moe says "Invalid uploader", 0x0.st resets, x0.at returned a link that 404'd.
-Recipe: commit the PNG to his Downloads → stage it back → `https://imgur.com/upload` → `file_upload` into **"Choose Photo/Video"** → regex the page for `i.imgur.com/<id>.png` → download and pixel-compare. Gotchas: the first upload once created an empty post (retry on a fresh page); the page sometimes hangs (fresh tab). Uploads stay hidden posts — **never click "Share to community".** An imgur link can't be overwritten, so every update needed a new MAL Submit — that's why we moved to GitHub.
+Recipe: commit the PNG into a connected folder on his PC → stage it back → `https://imgur.com/upload` → `file_upload` into **"Choose Photo/Video"** → regex the page for `i.imgur.com/<id>.png` → download and pixel-compare. Gotchas: the first upload once created an empty post (retry on a fresh page); the page sometimes hangs (fresh tab). Uploads stay hidden posts — **never click "Share to community".** An imgur link can't be overwritten, so every update needed a new MAL Submit — that's why we moved to GitHub.
 
 ## Posting to MAL (only needed when the link itself changes)
 
