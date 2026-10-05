@@ -13,6 +13,8 @@
   "hero": {
     "_display_name_note": "Leave empty to show your MAL username in capitals.",
     "display_name": "",
+    "_name_color_note": "\"ink\" (black) or \"gold\" (gold name + gold bar under it). Used by the profile image and the list banners.",
+    "name_color": "gold",
     "tagline_jp": "神のお気に入り",
     "tagline_en": "God's Favourite",
     "status_text": "ACTIVE",
@@ -91,14 +93,22 @@
 
   "theme": {
     "_note": "Each piece is \"dark\" (ink background, white text: the original look) or \"light\" (white background, black text). Gold accents stay gold either way.",
-    "header_bar":    "dark",
-    "favorites_bar": "dark",
+    "header_bar":    "light",
+    "favorites_bar": "light",
     "stats_box":     "light",
-    "footer_bar":    "dark",
+    "footer_bar":    "light",
     "_stats_labels_note": "Only for the white (light) stats box: \"gray\" or \"black\" labels.",
     "stats_labels":  "black",
     "_captions_note": "Titles under the covers: \"gray\" or \"black\".",
     "captions":      "black"
+  },
+
+  "lists": {
+    "_note": "Design for the MAL anime + manga list pages (Modern template, Default Theme). MAL's 'Add Custom CSS' box holds one line: @\\import \"https://git-matthew.github.io/mal-profile/list/list.css\"; build.py makes the banners, header/footer art and hi-res cover rules, GitHub publishes them daily. The look itself is in list/list.css.",
+    "enabled": true,
+    "pages_url": "https://git-matthew.github.io/mal-profile/list/",
+    "anime": { "title_jp": "鑑賞記録", "title_en": "Anime List" },
+    "manga": { "title_jp": "読書記録", "title_en": "Manga List" }
   },
 
   "output": {

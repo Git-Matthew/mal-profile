@@ -10,6 +10,7 @@ Rebuilds the MyAnimeList "About Me" image from config.json.
   python build.py --no-render           build output/profile.html but skip the PNG
   python build.py --config test.json    try a variant without touching config.json
   python build.py --no-archive          preview: don't save a dated copy into versions/
+  python build.py --no-list             skip the anime/manga list design files (output/list/)
   python build.py find "Chainsaw Man" --type manga      look up MAL ids for config.json
 
 Needs: Python 3.8+, Pillow (pip install pillow), and any Chromium-based browser
@@ -129,6 +130,7 @@ def compute_stats(anime, manga, rules):
     a_sel = [a for a in anime if a.get("status") in A]
     m_sel = [m for m in manga if m.get("status") in M]
     scored = [a["score"] for a in anime if a.get("status") in MS and (a.get("score") or 0) > 0]
+    m_scored = [int(m["score"]) for m in manga if int(m.get("status") or 0) in MS and int(m.get("score") or 0) > 0]
     n = lambda lst, st: len([x for x in lst if x.get("status") == st])
     return {
         "mean_score": f"{sum(scored) / len(scored):.2f}" if scored else "—",
@@ -143,6 +145,7 @@ def compute_stats(anime, manga, rules):
         "manga_completed": n(manga, 2),
         "manga_reading": n(manga, 1),
         "manga_total_entries": len(manga),
+        "manga_mean_score": f"{sum(m_scored) / len(m_scored):.2f}" if m_scored else "—",
     }
 
 
@@ -194,6 +197,14 @@ def font_faces():
     css += [f'  @font-face{{font-family:"{n}";src:url("{sym}");font-weight:{w};'
             f'unicode-range:U+2190-21FF,U+25A0-25FF,U+2600-27BF;}}' for n, _, w in faces[:3]]
     return "\n".join(css)
+
+
+def name_class(cfg):
+    """hero.name_color in config.json: "ink" (black, the original) or "gold" (name + the bar under it)."""
+    v = str(cfg.get("hero", {}).get("name_color", "ink")).lower()
+    if v not in ("ink", "gold"):
+        sys.exit(f'config.json hero.name_color must be "ink" or "gold" (got "{v}")')
+    return " name-gold" if v == "gold" else ""
 
 
 def card(rank, img_path, caption, cls):
@@ -263,6 +274,7 @@ def build_html(cfg, stats, posters, poster_h=None, fill_h=None):
         theme_classes += " caps-ink"       # titles under the covers in black instead of gray
     if fill_h:
         theme_classes += " fill"           # card is exactly fill_h tall (see fit_poster_height)
+    theme_classes += name_class(cfg)
 
     fs, c = cfg["favorites_section"], cfg["colors"]
     tpl = Template((ROOT / "template" / "profile_template.html").read_text(encoding="utf-8"))
@@ -355,6 +367,111 @@ def fit_poster_height(cfg, stats, posters, target):
     return p
 
 
+# ----------------------------------------------------------------- list design (MAL anime + manga list pages)
+LIST_W, LIST_POP, LIST_HERO_H = 1060, 70, 260      # page width, MAL header height (Satsuki rises into it), banner height
+
+
+def cover_url(path):
+    """MAL list thumbnail (r/192x272/...jpg?s=..) -> the large 426x600 webp of the same cover."""
+    m = re.match(r"https://cdn\.myanimelist\.net/(?:r/\d+x\d+/)?(images/(?:anime|manga)/\d+/\d+)\.(?:jpe?g|png|webp)", path or "")
+    return f"https://cdn.myanimelist.net/{m.group(1)}l.webp" if m else None
+
+
+def covers_css(items, kind):
+    rules = []
+    for it in items:
+        u = cover_url(it.get(f"{kind}_image_path"))
+        if u and it.get(f"{kind}_id"):
+            rules.append(f'.data.image a[href^="/{kind}/{it[f"{kind}_id"]}/"]::after{{background-image:url({u})}}')
+    return (f"/* Hi-res {kind} covers for the list design: one rule per entry, rebuilt by build.py every day.\n"
+            f"   Sits over MAL's own thumbnail, so an entry added since the last build still shows a cover. */\n" + "\n".join(rules) + "\n")
+
+
+def render_transparent(html_path, png_path, w, h):
+    shot = png_path.with_suffix(".raw.png")
+    shot.unlink(missing_ok=True)
+    subprocess.run([find_browser(), "--headless=new", "--disable-gpu", "--no-sandbox", "--allow-file-access-from-files",
+                    "--hide-scrollbars", "--force-device-scale-factor=2", f"--window-size={max(w, 800)},{max(h, 400)}",  # tiny windows render blank
+                    "--default-background-color=00000000", "--virtual-time-budget=8000", f"--screenshot={shot}", html_path.as_uri()],
+                   capture_output=True, timeout=180)
+    if not shot.exists():
+        sys.exit(f"The browser didn't produce {png_path.name}.")
+    im = Image.open(shot).convert("RGBA")
+    if im.size != (w * 2, h * 2):
+        im = im.crop((0, 0, w * 2, h * 2))
+    im.save(png_path, optimize=True)
+    shot.unlink()
+
+
+def list_bar_classes(cfg):
+    th = cfg.get("theme", {})
+    return ((" hdr-light" if str(th.get("header_bar", "dark")).lower() == "light" else "") +
+            (" foot-light" if str(th.get("footer_bar", "dark")).lower() == "light" else ""))
+
+
+def list_theme_css(cfg):
+    """theme.css: the bar colours for list.css, following config.json > theme like the profile does."""
+    th, c = cfg.get("theme", {}), cfg["colors"]
+    light = lambda k: str(th.get(k, "dark")).lower() == "light"
+    v = {"--hdr-bg": "#fff" if light("header_bar") else c["ink"], "--hdr-text": c["ink"] if light("header_bar") else "#fff",
+         "--hdr-sub": "#707884" if light("header_bar") else "#9aa2b1", "--hdr-dim": "#b9bfca" if light("header_bar") else "#5d6472",
+         "--band-bg": "#fff" if light("favorites_bar") else c["ink"], "--band-text": c["ink"] if light("favorites_bar") else "#fff",
+         "--band-line": c["ink"] if light("favorites_bar") else "transparent",
+         "--foot-bg": "#fff" if light("footer_bar") else c["ink"], "--foot-line": c["ink"] if light("footer_bar") else "transparent"}
+    return ("/* Bar colours for list.css, written by build.py from config.json > theme (light = white bars). */\n:root{" +
+            ";".join(f"{k}:{val}" for k, val in v.items()) + "}\n")
+
+
+def build_list_assets(cfg, stats, lists):
+    """Everything the list pages load from GitHub Pages: banners, header/footer art, cover rules, list.css."""
+    lc = cfg.get("lists", {})
+    out = ROOT / "output" / "list"
+    out.mkdir(parents=True, exist_ok=True)
+    tpl = Template((ROOT / "template" / "list_assets_template.html").read_text(encoding="utf-8"))
+    ch, hd, c = cfg["character"], cfg["header"], cfg["colors"]
+    img_path = (ROOT / ch["image"]).resolve()
+    w, h = Image.open(img_path).size
+    char_h = round(ch["height_px"] * (LIST_POP + LIST_HERO_H) / (HEADER_H + 250), 1)   # same framing as the profile
+    img_left = LIST_W - ch["right_px"] - w * char_h / h
+    tag = ch.get("name_tag", {})
+    nameplate = ""
+    if tag.get("enabled"):
+        star = '<span class="st">★</span>' if tag.get("show_star", True) else ""
+        nameplate = (f'      <div class="nameplate" style="left:{round(img_left - 11.5)}px;top:{round(tag.get("top_px", 64) * LIST_HERO_H / 250)}px">'
+                     f'{star}<span class="nm">{esc(tag["text_jp"])}</span></div>')
+    stars = (f'<span class="sep">//</span><span class="st">{"★" * hd["stars"]}</span>' if hd.get("stars") else "")
+    base = dict(FONT_FACES=font_faces(), INK=c["ink"], GOLD=c["gold"], BLUE=c["blue"], GREEN=c["green"], PAD=18, BODY_CLASSES=name_class(cfg) + list_bar_classes(cfg),
+                CHAR_SRC=img_path.as_uri(), CHAR_H=char_h, CHAR_TOP=ch["top_px"], CHAR_RIGHT=ch["right_px"], NAMEPLATE_HTML=nameplate,
+                DISPLAY_NAME=esc(cfg["hero"]["display_name"]), CREST=esc(hd["crest_kanji"]), HEADER_TITLE=esc(hd["title"]),
+                HEADER_NUMBER=esc(hd["number"]), HEADER_STARS_HTML=stars, QUOTE_JP=esc(cfg["footer_quote"]["jp"]),
+                QUOTE_EN=esc(cfg["footer_quote"]["en"]), POP=LIST_POP, TITLE_JP="", TITLE_EN="", CHIPS_HTML="")
+    chip = lambda body: f"          <span class=\"chip\">{body}</span>"
+    active = chip(f'<span class="dot"></span> STATUS: {esc(cfg["hero"]["status_text"])}')
+    parts = {
+        "anime_banner": dict(PART="banner", W=LIST_W, H=LIST_POP + LIST_HERO_H, TITLE_JP=esc(lc.get("anime", {}).get("title_jp", "鑑賞記録")),
+                             TITLE_EN=esc(lc.get("anime", {}).get("title_en", "Anime List")),
+                             CHIPS_HTML="\n".join([active, chip(f'ANIME ▸ COMPLETED {fmt(stats["anime_completed"])}'),
+                                                   chip(f'MEAN SCORE <span class="star">★</span> {stats["mean_score"]}')])),
+        "manga_banner": dict(PART="banner", W=LIST_W, H=LIST_POP + LIST_HERO_H, TITLE_JP=esc(lc.get("manga", {}).get("title_jp", "読書記録")),
+                             TITLE_EN=esc(lc.get("manga", {}).get("title_en", "Manga List")),
+                             CHIPS_HTML="\n".join([active, chip(f'MANGA ▸ VOLUMES {fmt(stats["manga_volumes"])}')] +
+                                                  ([chip(f'MEAN SCORE <span class="star">★</span> {stats["manga_mean_score"]}')]
+                                                   if stats.get("manga_mean_score", "—") != "—" else []))),
+        "header": dict(PART="header", W=300, H=62),
+        "footer": dict(PART="footer", W=420, H=30),
+    }
+    for name, kw in parts.items():
+        page = out / f"_{name}.html"
+        page.write_text(tpl.substitute({**base, **kw}), encoding="utf-8")
+        render_transparent(page, out / f"{name}.png", kw["W"], kw["H"])
+        page.unlink()
+    (out / "anime_covers.css").write_text(covers_css(lists["anime"], "anime"), encoding="utf-8")
+    (out / "manga_covers.css").write_text(covers_css(lists["manga"], "manga"), encoding="utf-8")
+    (out / "theme.css").write_text(list_theme_css(cfg), encoding="utf-8")
+    shutil.copy2(ROOT / "list" / "list.css", out / "list.css")
+    print(f"  list design: banners, header, footer, {len(lists['anime'])} anime + {len(lists['manga'])} manga cover rules -> output/list/")
+
+
 # ----------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(description="Rebuild the MAL About Me image from config.json")
@@ -367,6 +484,7 @@ def main():
     ap.add_argument("--no-render", action="store_true")
     ap.add_argument("--config", help="use a different config file (for experiments)")
     ap.add_argument("--no-archive", action="store_true", help="don't save a dated copy into versions/ (for previews)")
+    ap.add_argument("--no-list", action="store_true", help="skip the anime/manga list design files")
     a = ap.parse_args()
 
     if a.cmd == "find":
@@ -411,6 +529,9 @@ def main():
     if a.no_render:
         print(f"  wrote {html_path} (render skipped)")
         return
+
+    if cfg.get("lists", {}).get("enabled", True) and not a.no_list:
+        build_list_assets(cfg, stats, lists)
 
     png = out / f"{cfg['output']['basename']}.png"
     w, h = render(html_path, png)
