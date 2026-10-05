@@ -368,7 +368,7 @@ def fit_poster_height(cfg, stats, posters, target):
 
 
 # ----------------------------------------------------------------- list design (MAL anime + manga list pages)
-LIST_W, LIST_POP, LIST_HERO_H = 1060, 70, 260      # page width, MAL header height (Satsuki rises into it), banner height
+LIST_W, LIST_POP, LIST_HERO_H = 1060, 68, 260      # card's inner width, header bar inside the frame (Satsuki rises into it), banner
 
 
 def cover_url(path):
@@ -391,7 +391,8 @@ def render_transparent(html_path, png_path, w, h):
     shot = png_path.with_suffix(".raw.png")
     shot.unlink(missing_ok=True)
     subprocess.run([find_browser(), "--headless=new", "--disable-gpu", "--no-sandbox", "--allow-file-access-from-files",
-                    "--hide-scrollbars", "--force-device-scale-factor=2", f"--window-size={max(w, 800)},{max(h, 400)}",  # tiny windows render blank
+                    # tiny windows render blank, and new-headless Chrome keeps ~90px of the window for its (invisible) toolbar
+                    "--hide-scrollbars", "--force-device-scale-factor=2", f"--window-size={max(w, 800)},{h + 300}",
                     "--default-background-color=00000000", "--virtual-time-budget=8000", f"--screenshot={shot}", html_path.as_uri()],
                    capture_output=True, timeout=180)
     if not shot.exists():
@@ -457,7 +458,7 @@ def build_list_assets(cfg, stats, lists):
                              CHIPS_HTML="\n".join([active, chip(f'MANGA ▸ VOLUMES {fmt(stats["manga_volumes"])}')] +
                                                   ([chip(f'MEAN SCORE <span class="star">★</span> {stats["manga_mean_score"]}')]
                                                    if stats.get("manga_mean_score", "—") != "—" else []))),
-        "header": dict(PART="header", W=300, H=62),
+        "header": dict(PART="header", W=300, H=60),
         "footer": dict(PART="footer", W=420, H=30),
     }
     for name, kw in parts.items():
