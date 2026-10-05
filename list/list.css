@@ -169,8 +169,8 @@ body.ownlist .list-table .list-item .data.chapter > div,
 body.ownlist .list-table .list-item .data.volume > div{display:inline}
 body.ownlist .list-table .list-item .data.progress a,body.ownlist .list-table .list-item .data.chapter a,
 body.ownlist .list-table .list-item .data.volume a{color:var(--ink)}
-body.ownlist .list-table .list-item .icon-add-episode,body.ownlist .list-table .list-item .icon-add-chapter,
-body.ownlist .list-table .list-item .icon-add-volume{color:var(--gold);margin-left:4px}
+body.ownlist .list-table .list-item .data a.icon-add-episode,body.ownlist .list-table .list-item .data a.icon-add-chapter,
+body.ownlist .list-table .list-item .data a.icon-add-volume{color:var(--gold);margin-left:4px}       /* owner's +1 buttons */
 /* any extra columns turned on in MAL's list settings: small full-width lines */
 body.ownlist .list-table .list-item .data.tags,body.ownlist .list-table .list-item .data.rated,
 body.ownlist .list-table .list-item .data.started,body.ownlist .list-table .list-item .data.finished,
