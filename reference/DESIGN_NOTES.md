@@ -77,6 +77,8 @@ Ryo Asuka (Devilman Crybaby), `profile_picture/`. Bordered version = 10px `#1515
 
 Same design on MAL's **Modern** list (Default Theme + one `@\import` line; see MAL_TECH_NOTES.md). He asked for it to "follow the same design we have for my profile so its consistent", remembering all his profile preferences, and left Modern vs Classic to Claude.
 
+The whole list is **one framed card like the profile image**: a 2px black frame around header, banner, list and footer. He asked for it ("the entire thing has a black outline around it, which makes the satsuki image look perfect since it'd normally get cut on the right"), Oct 5, 2026.
+
 Top to bottom:
 1. **Header bar** = the profile's: gold top line, white bar, 神 crest + MYANIMELIST (`header.png`), gold dashed rule. MAL's "Viewing <user>'s Anime List ▾" menu moved next to the title (Satsuki covers the right side).
 2. **Banner** (`anime_banner.png` / `manga_banner.png`, rebuilt daily): the username in gold + gold bar, title pair **鑑賞記録 ANIME LIST** / **読書記録 MANGA LIST** (gold Japanese + gray English, same sizes as the motto, measured equal), chips (● STATUS: ACTIVE · ANIME ▸ COMPLETED n · MEAN SCORE ★ x.xx | MANGA ▸ VOLUMES n · MEAN SCORE ★ x.xx), Satsuki popping out over the header bar, the 鬼龍院皐月 name tag.
