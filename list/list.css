@@ -2,7 +2,8 @@
   MAL Profile Kit — list design (MyAnimeList Modern list, anime + manga).
   Same look as the About Me image: white page, flat white bars with gold dashes and black lines, the 神 crest,
   Satsuki popping out of the banner into the header, gold rank badges with white numbers, black-framed covers,
-  mono captions. The bar colours come from theme.css, which build.py writes from config.json > theme (white or black
+  mono captions, and the profile's black frame as two lines down the middle of the page (the header and footer
+  bars run across the whole page, through them). The bar colours come from theme.css, which build.py writes from config.json > theme (white or black
   bars, same switches as the profile).
 
   How it's loaded: MAL > Settings > List Style Design > Modern > Default Theme > "Add Custom CSS" holds one line
@@ -29,16 +30,22 @@ body.ownlist{background:#fff !important;background-image:none !important;color:v
 body.ownlist a{color:var(--ink)}
 body.ownlist a:hover{color:var(--blue)}
 
-/* ------------------------------------------------------------------ the whole list is one framed card, like the profile image:
-   a 2px black frame around header + banner + list (it also frames where Satsuki's art is cut on the right) */
-/* header bar = top of the card: black frame, gold top line, gold dashed rule (like the profile) */
-body.ownlist .header{box-sizing:content-box;width:var(--W);height:68px;margin:0 auto;border:2px solid var(--ink);border-bottom:0;
+/* ------------------------------------------------------------------ the frame: like the profile image, two 2px black lines run down
+   the page around header + banner + list (they also frame where Satsuki's art is cut on the right). The header bar and the
+   footer's quote bar run across the WHOLE page (gold lines, dashed rules, bottom line) and the frame's lines cross them, so
+   the frame reads as a design choice in the middle of the page, not a limit. Lines inside the list (tabs, title band,
+   STATS drawer) run frame to frame and meet it. */
+/* header bar: full width, gold top line, gold dashed rule (dashes lined up with the list's left edge) */
+body.ownlist .header{box-sizing:border-box;width:auto;height:70px;margin:0;border:0;
   background:linear-gradient(var(--gold),var(--gold)) left top/100% 5px no-repeat,var(--hdr-bg,#fff)}
-body.ownlist .header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
-  background:repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px)}
-body.ownlist .header .header-title{top:5px;left:0;width:300px;height:60px;
+body.ownlist .header::after{content:"";position:absolute;left:0;right:0;bottom:0;width:auto;height:3px;z-index:1;
+  background:repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px) calc(50% - 510px) 0/40px 3px repeat-x}
+/* the frame's two lines through the header bar, exactly over the list's side borders below (on top of the gold lines) */
+body.ownlist .header::before{content:"";position:absolute;top:0;bottom:0;left:max(0px,calc(50% - 532px));width:calc(var(--W) + 4px);
+  z-index:2;box-sizing:border-box;border-left:2px solid var(--ink);border-right:2px solid var(--ink);background:none;pointer-events:none}
+body.ownlist .header .header-title{top:6px;left:calc(max(0px,calc(50% - 532px)) + 2px);width:300px;height:60px;
   background:url("header.png") left top/300px 60px no-repeat}
-body.ownlist .header .header-menu{top:19px;right:auto;left:318px;z-index:30;text-align:left}
+body.ownlist .header .header-menu{top:20px;right:auto;left:calc(max(0px,calc(50% - 532px)) + 320px);z-index:30;text-align:left}
 body.ownlist .header .header-menu .btn-menu{text-align:left;font:400 14px/1.2 var(--mono);letter-spacing:.06em;color:var(--hdr-sub,#707884)}
 body.ownlist .header .header-menu .btn-menu a{color:var(--hdr-text,#15151c);font-weight:400}
 body.ownlist .header .header-menu .btn-menu a.username{color:var(--gold)}
@@ -51,7 +58,7 @@ body.ownlist .header .header-menu .list-menu .icon-menu svg.icon{fill:var(--ink)
 body.ownlist .header .header-menu .list-menu .icon-menu:hover svg.icon{fill:#fff}
 
 /* ------------------------------------------------------------------ container + banner (Satsuki rises into the header bar) */
-body.ownlist .list-container{box-sizing:content-box;width:var(--W);border:2px solid var(--ink);border-top:0;background:#fff}
+body.ownlist .list-container{box-sizing:content-box;width:var(--W);border:2px solid var(--ink);border-top:0;border-bottom:0;background:#fff}
 body.ownlist .cover-block{position:relative;width:var(--W);height:260px;margin:0}
 body.ownlist .cover-block .image-container{display:none !important}
 body.ownlist .cover-block::before{content:"";position:absolute;left:0;bottom:0;width:var(--W);height:328px;z-index:20;pointer-events:none;
@@ -73,19 +80,22 @@ body.ownlist .status-menu-container .search-container #search-button{margin-top:
 body.ownlist .status-menu-container .search-container #search-box{margin-top:9px}
 body.ownlist .status-menu-container .search-container #search-box input{border:1.5px solid var(--ink);font:400 12px var(--mono);padding:0 6px}
 
-/* ------------------------------------------------------------------ title band: like the profile's 推し FAVORITES bar */
-body.ownlist .list-block{margin-top:24px}
+/* ------------------------------------------------------------------ title band: like the profile's 推し FAVORITES bar, it runs
+   frame to frame (its lines meet the frame) with the gold label against the left line. It sits right under the tabs and
+   shares their bottom line, like the profile's stacked bars (a gap there would be an empty boxed-in strip). */
+body.ownlist .list-block{margin-top:-2px}
 body.ownlist .list-unit{width:1024px}
-body.ownlist .list-unit .list-status-title{display:flex;align-items:stretch;width:auto;height:auto;background:var(--band-bg,#fff);
+body.ownlist .list-unit .list-status-title{display:flex;align-items:stretch;width:auto;height:auto;margin:0 -18px;background:var(--band-bg,#fff);
   border-top:2px solid var(--band-line,#15151c);border-bottom:2px solid var(--band-line,#15151c)}
 body.ownlist .list-unit .list-status-title::before{display:flex;align-items:center;padding:0 12px;background:var(--gold);color:#fff;
   text-shadow:0 1px 1px rgba(0,0,0,.28);font:900 17.5px/1 var(--jp)}
 body.ownlist .list-unit .list-status-title .text{display:flex;align-items:center;width:auto;height:auto;padding:12px 14px 11px;
   font:400 19px/1 var(--anton);letter-spacing:.1em;color:var(--band-text,#15151c);text-align:left;position:relative;top:1px}
-body.ownlist .list-unit .list-status-title .stats{top:0;right:10px;height:100%;line-height:normal;display:flex;align-items:center}
+body.ownlist .list-unit .list-status-title .stats{top:0;right:28px;height:100%;line-height:normal;display:flex;align-items:center}
 body.ownlist .list-unit .list-status-title .stats a{color:var(--band-text,#15151c);font:400 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
 body.ownlist .list-unit .list-status-title .stats a:hover{color:var(--gold)}
-body.ownlist .list-unit .list-stats{width:auto;background:#fff;color:var(--ink);border:2px solid var(--ink);border-top:0;font:400 12px/30px var(--mono)}
+body.ownlist .list-unit .list-stats{width:auto;margin:0 -18px;background:#fff;color:var(--ink);border:0;border-bottom:2px solid var(--ink);
+  font:400 12px/30px var(--mono)}                                   /* STATS drawer: also frame to frame, under the band */
 /* Japanese for each tab (same visible height as the English, like 推し / FAVORITES) */
 body.anime .list-unit.all_anime .list-status-title::before{content:"鑑賞記録"}
 body.manga .list-unit.all_anime .list-status-title::before,
@@ -185,10 +195,15 @@ body.ownlist .list-table .list-item .more-info{border:0}
 body.ownlist .list-table .list-item .more-info .more-content{display:block;padding:8px 0 0;font:400 10.5px/1.4 var(--mono);color:var(--mut)}
 body.ownlist .list-unit .loading-space{grid-column:1/-1;color:var(--gold)}
 
-/* ------------------------------------------------------------------ footer: the profile's quote bar */
-body.ownlist .list-container::after{content:"";display:block;height:46px;margin-top:44px;
+/* ------------------------------------------------------------------ footer: the profile's quote bar, across the whole page like the
+   header bar (gold dashed rule on top, black line at the bottom); the frame's lines run down through it and stop on that line */
+body.ownlist .list-container::after{content:"";display:block;height:44px}          /* space under the last row of covers */
+body.ownlist > footer{position:relative}
+body.ownlist > footer::before{content:"";display:block;height:46px;border-bottom:2px solid var(--foot-line,#15151c);
   background:url("footer.png") center 10px/420px 30px no-repeat,
-    repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px) left top/100% 3px no-repeat,var(--foot-bg,#fff)}
+    repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px) calc(50% - 510px) 0/40px 3px repeat-x,var(--foot-bg,#fff)}
+body.ownlist > footer::after{content:"";position:absolute;top:0;height:48px;left:max(0px,calc(50% - 532px));width:calc(var(--W) + 4px);
+  z-index:2;box-sizing:border-box;border-left:2px solid var(--ink);border-right:2px solid var(--ink);pointer-events:none}
 
 /* MAL's own site footer under it: quiet, on white */
 body.ownlist #footer-block{background:#fff;color:var(--mut);font-family:var(--mono);padding:16px 0 20px}
