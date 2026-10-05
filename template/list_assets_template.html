@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  MAL Profile Kit — list design artwork (rendered by build.py into transparent PNGs for the anime/manga list pages).
+  One template, three parts (body class): part-banner (hero + Satsuki popping into MAL's header bar),
+  part-header (神 crest + MYANIMELIST for MAL's header bar), part-footer (the quote).
+  Same fonts, colours and sizes as the profile image so both look like one design. Don't add other dollar signs.
+-->
+<html lang="en"><head><meta charset="utf-8">
+<style>
+${FONT_FACES}
+  :root{--ink:${INK};--sblue:${BLUE};--gold:${GOLD};--green:${GREEN};--line:#d6dce8;--mut:#707884}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:transparent}
+  body{width:${W}px;height:${H}px;overflow:hidden;font-family:"KitOswald",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  .part{display:none;position:relative;width:${W}px;height:${H}px}
+  body.part-banner .banner,body.part-header .hdr,body.part-footer .foot{display:block}
+
+  /* ---------- banner: transparent strip on top (MAL's header bar shows through; only Satsuki rises into it) ---------- */
+  .banner .hero{position:absolute;left:0;right:0;top:${POP}px;bottom:0;background:#fff;overflow:hidden}
+  .hero .grid{position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:26px 26px;-webkit-mask-image:linear-gradient(90deg,#000 0 42%,transparent 70%)}
+  .hbody{position:relative;z-index:7;height:100%;padding:0 0 0 ${PAD}px;display:flex;flex-direction:column;justify-content:center}
+  .name{font-family:"KitAnton";font-size:78px;line-height:.86;letter-spacing:.005em;color:var(--ink)}
+  .underbar{height:7px;width:232px;margin-top:8px;background:var(--ink);position:relative}
+  .underbar::after{content:"";position:absolute;right:-1px;top:0;height:7px;width:46px;background:var(--sblue)}
+  /* hero.name_color = "gold" in config.json: gold name and gold bar under it (the MAL-blue tip stays) */
+  body.name-gold .name{color:var(--gold)}
+  body.name-gold .underbar{background:var(--gold)}
+  /* Japanese + English: same sizes/nudges as the profile motto (measured equal visible height) */
+  .title{display:flex;align-items:baseline;gap:10px;margin-top:14px}
+  .title .jpn{font-family:"KitJP";font-weight:900;font-size:24px;color:var(--gold);line-height:1}
+  .title .en{font-family:"KitOswald";font-weight:500;font-size:28px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase;position:relative;top:2px}
+  .chips{display:flex;gap:8px;margin-top:16px}
+  .chip{display:flex;align-items:center;gap:7px;border:1.5px solid var(--ink);padding:5px 11px;font-family:"KitMono";
+    font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;background:#fff}
+  .chip .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.22)}
+  .chip .star{color:var(--gold);font-size:12px;letter-spacing:0}
+  .chip b{font-family:"KitAnton";font-weight:400;font-size:13px;letter-spacing:.04em}
+  .nameplate{position:absolute;width:30px;bottom:0;z-index:6;background:#fff;border:2px solid var(--ink);border-bottom:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px}
+  .nameplate::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold)}
+  .nameplate .st{color:var(--gold);font-size:10px;line-height:1}
+  .nameplate .nm{writing-mode:vertical-rl;font-family:"KitJP";font-weight:900;font-size:14px;letter-spacing:.32em;color:var(--gold)}
+  .satlayer{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+  .satlayer img{position:absolute;right:${CHAR_RIGHT}px;top:${CHAR_TOP}px;height:${CHAR_H}px;width:auto;display:block}
+
+  /* ---------- header: 神 crest + MYANIMELIST, sits on MAL's (restyled) header bar ---------- */
+  .hdr{display:none;align-items:center;gap:14px;padding:0 0 0 26px;color:#fff}   /* crest lines up with the list's left edge */
+  body.part-header .hdr{display:flex}
+  .crest{width:38px;height:38px;flex:none;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    background:#fff;transform:rotate(45deg)}
+  .crest span{transform:rotate(-45deg) translate(1.12px,-2px);font-family:"KitJP";font-weight:900;color:var(--sblue);font-size:25.5px}
+  .hdr .t1{font-family:"KitAnton";font-size:20px;letter-spacing:.14em;line-height:1}
+  .hdr .t2{display:flex;align-items:center;gap:8px;margin-top:5px;font-family:"KitMono";font-size:11px;color:#9aa2b1;letter-spacing:.2em}
+  .hdr .t2 .sep{color:#5d6472}
+  .hdr .t2 .st{color:var(--gold);letter-spacing:.12em;font-size:11px}
+  /* white header bar (theme.header_bar = "light"): black title, gray sub-line, like the profile */
+  body.hdr-light .hdr{color:var(--ink)}
+  body.hdr-light .hdr .t2{color:var(--mut)}
+  body.hdr-light .hdr .t2 .sep{color:#b9bfca}
+
+  /* ---------- footer quote (Japanese 14px, English 16px: same look as the profile footer) ---------- */
+  .foot{display:none;align-items:center;justify-content:center;gap:14px;color:#fff}
+  body.part-footer .foot{display:flex}
+  .foot .jpq{font-family:"KitJP";font-weight:900;font-size:14px;line-height:1;color:#fff}
+  .foot .enq{font-family:"KitMono";font-size:16px;line-height:1;color:var(--gold);letter-spacing:.16em;position:relative;top:1px}
+  body.foot-light .foot .jpq{color:var(--ink)}         /* white footer bar: black Japanese, gold English */
+</style></head>
+<body class="part-${PART}${BODY_CLASSES}">
+  <div class="part banner">
+    <div class="hero">
+      <div class="grid"></div>
+${NAMEPLATE_HTML}
+      <div class="hbody">
+        <div class="name">${DISPLAY_NAME}</div>
+        <div class="underbar"></div>
+        <div class="title"><span class="jpn">${TITLE_JP}</span><span class="en">${TITLE_EN}</span></div>
+        <div class="chips">
+${CHIPS_HTML}
+        </div>
+      </div>
+    </div>
+    <div class="satlayer"><img src="${CHAR_SRC}" alt=""></div>
+  </div>
+
+  <div class="part hdr">
+    <div class="crest"><span>${CREST}</span></div>
+    <div>
+      <div class="t1">${HEADER_TITLE}</div>
+      <div class="t2"><span>${HEADER_NUMBER}</span>${HEADER_STARS_HTML}</div>
+    </div>
+  </div>
+
+  <div class="part foot"><span class="jpq">${QUOTE_JP}</span><span class="enq">${QUOTE_EN}</span></div>
+</body></html>

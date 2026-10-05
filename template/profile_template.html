@@ -27,8 +27,8 @@ ${FONT_FACES}
     background:repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px)}
   .crest{width:38px;height:38px;flex:none;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
     background:#fff;transform:rotate(45deg)}       /* white diamond, MAL-blue kanji */
-  /* 神: 25% bigger than the original 18px (Oct 4, 2026); the nudge puts the ink dead centre, ~4px clear of the gold border */
-  .crest span{transform:rotate(-45deg) translate(.5px,-1.6px);font-family:"KitJP";font-weight:900;color:var(--sblue);font-size:22.5px}
+  /* 神: 25.5px (Oct 5, 2026; 18px originally); the nudge puts the ink dead centre, ~2.7px clear of the gold border */
+  .crest span{transform:rotate(-45deg) translate(1.12px,-2px);font-family:"KitJP";font-weight:900;color:var(--sblue);font-size:25.5px}
   .top .t1{font-family:"KitAnton";font-size:20px;letter-spacing:.14em;line-height:1}
   .top .t2{display:flex;align-items:center;gap:8px;margin-top:5px;font-family:"KitMono";font-size:11px;color:#9aa2b1;letter-spacing:.2em}
   .top .t2 .sep{color:#5d6472}
@@ -43,6 +43,9 @@ ${FONT_FACES}
   .name{font-family:"KitAnton";font-size:78px;line-height:.86;letter-spacing:.005em;color:var(--ink)}
   .underbar{height:7px;width:232px;margin-top:8px;background:var(--ink);position:relative}
   .underbar::after{content:"";position:absolute;right:-1px;top:0;height:7px;width:46px;background:var(--sblue)}
+  /* hero.name_color = "gold" in config.json: gold name and gold bar under it (the MAL-blue tip stays) */
+  body.name-gold .name{color:var(--gold)}
+  body.name-gold .underbar{background:var(--gold)}
   .title{display:flex;align-items:baseline;gap:10px;margin-top:14px}
   /* Japanese + English pairs: sizes and 1-2px nudges are tuned so both show the SAME visible height
      (measured on the render; Matthew's rule). Re-check with tools/measure_pairs.py after changing fonts/sizes. */
@@ -155,6 +158,10 @@ ${FONT_FACES}
   body.caps-ink .cap{color:var(--ink)}
   body.foot-light .foot{background:#fff;color:var(--ink)}
   body.foot-light .foot .jpq{color:var(--ink)}
+  /* white bars are FLAT white like the stats box: no scanline texture over them */
+  body.hdr-light .doc::after{top:63px}
+  body.band-light .band{position:relative;z-index:41}
+  body.foot-light .foot{z-index:41}
 </style></head>
 <body class="mode-${MODE}${THEME_CLASSES}">
   <div class="doc">
