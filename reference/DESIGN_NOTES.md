@@ -1,4 +1,4 @@
-# Design notes — MAL About Me
+# Design notes — MAL About Me + list pages
 
 Read this before changing anything visual. It records what the design is, why each piece exists, and every preference Matthew stated while it was built (Oct 2026). **Don't redesign unless asked** — he iterated hard to get here.
 
@@ -8,21 +8,21 @@ A single 798 × 1000px image on MAL's Classic About Me (exactly MAL's limit befo
 
 Top to bottom:
 
-1. **Gold top line** (5px) → **ink header bar**: white diamond crest (gold border) with a MAL-blue **神**, title **MYANIMELIST**, sub-line **#0001 // ★★★★★**, gold dashed rule underneath.
-2. **Hero** (white, faint grid on the left that fades out): **the MAL username in capitals** (Anton, all black) over a black underbar with a MAL-blue tip; motto **神のお気に入り** in gold + **GOD'S FAVOURITE** in gray, both the same visible height; chips **● STATUS: ACTIVE** (green dot) and **MEAN SCORE ★ x.xx**.
+1. **Gold top line** (5px) → **header bar** (flat white since Oct 5, 2026; was ink): white diamond crest (gold border) with a MAL-blue **神** (25.5px, centred, ~2.7px clear of the border), black **MYANIMELIST**, gray sub-line **#0001 // ★★★★★** (gold stars), gold dashed rule underneath.
+2. **Hero** (white, faint grid on the left that fades out): **the MAL username in capitals** (Anton, **gold** since Oct 5, 2026) over a **gold** underbar with a MAL-blue tip; motto **神のお気に入り** in gold + **GOD'S FAVOURITE** in gray, both the same visible height; chips **● STATUS: ACTIVE** (green dot) and **MEAN SCORE ★ x.xx**.
 3. **Satsuki** (his transparent sparkle PNG) on the right. The *whole* image — hair and sparkles — rides **over the header** for a 3D "pop-out" feel, and is clipped only where the Favorites bar starts. **No effects on her** (no shadow, no glow, no outline).
 4. **Name tag**: slim white tag, **black outline**, gold top cap, gold **★** and gold vertical **鬼龍院皐月**, rising from the Favorites bar to mid-height. It exists to hide where the art's hair runs into the image edge (the source art is cropped there). `build.py` auto-positions it on that edge.
-5. **Favorites bar** (ink): gold **推し** block (white text, like the rank badges) + **FAVORITES** (same visible height).
+5. **Favorites bar** (flat white with black lines above and below; was ink): gold **推し** block (white text, like the rank badges) + black **FAVORITES** (same visible height).
 6. **▸ TOP ANIME 鑑賞記録** (label in bold Anton, kanji the same height) — 5 poster cards (black frame, soft offset shadow; **every cover in the image is the same size**: 140px wide, height picked by `build.py` so the image is exactly 1000px, ~219px today), gold rank badge with **white** number, caption under each in **black** (wraps to 2 lines, never truncated).
 7. **▸ TOP MANGA 読書記録** — 1–3 manga: cards + **STATS** card (**flat white, black border**, STATS title as big as the numbers (28px title / 26px numbers) + gold ★★★★★, black labels at 15px, gold dashed dividers, faint gold ring in the corner). 4–5 manga: full row + horizontal stats strip in the same style.
-8. **Footer** (ink, gold dashed top): **「恐怖こそ自由！」 FEAR IS FREEDOM** (Japanese 14px; English 16px so its capitals look as tall as the Japanese, i.e. about the kana height. Capitals as tall as the kanji looked bigger to him).
+8. **Footer** (flat white, gold dashed top; was ink): black **「恐怖こそ自由！」** + gold **FEAR IS FREEDOM** (Japanese 14px; English 16px so its capitals look as tall as the Japanese, i.e. about the kana height. Capitals as tall as the kanji looked bigger to him).
 
 ## Palette & type
 
 | Token | Hex | Use |
 |---|---|---|
-| ink | `#15151c` | bars, frames, text |
-| gold | `#d7a736` | top line, dashes, crest border, motto, rank badges, 推し block, stars |
+| ink | `#15151c` | frames, text, the lines on the white bars |
+| gold | `#d7a736` | top line, dashes, crest border, **name + the bar under it**, motto, rank badges, 推し block, stars |
 | blue | `#2e51a2` | MyAnimeList's own blue (its nav bar): 神 kanji, underbar tip, ▸ row arrows |
 | green | `#22c55e` | "online" status dot |
 | white | `#ffffff` | backgrounds (pure white — no tints) |
@@ -41,9 +41,10 @@ Fonts (bundled in `assets/fonts/`): **Anton** (display + titles), **Share Tech M
 - Number badges: gold background, **white** numbers.
 - **Stats box (Oct 3, 2026):** **flat white** (no texture lines: it sits above the page's faint scanline overlay), **black border**, **bigger text** so it doesn't get lost next to the covers. Chosen over the original dark box with a gold border.
 - **Black text over light gray** for the stats labels and the cover titles ("I definitely prefer black letters over light gray letters"). Still gray: GOD'S FAVOURITE and the small kanji next to TOP ANIME / TOP MANGA.
-- **Bars stay black** (header, Favorites, footer). White versions exist as `theme` switches in config.json; he saw them (Oct 3, 2026) and didn't switch.
+- **Bars are white** (header, Favorites, footer) since Oct 5, 2026: he'd seen white versions on Oct 3 and kept black then; with the gold name he tried them again and switched. White bars must be **flat white** (no scanline texture), like the stats box. Black versions are still one `theme` switch away in config.json.
 - **Every Japanese + English pair has the same visible height** ("every time there is japanese and english ensure both are same height"): the motto, 推し FAVORITES, TOP ANIME / TOP MANGA + kanji, and the footer quote. Sizes and 1–2px nudges were tuned by measuring the rendered image; re-check with `tools/measure_pairs.py` after any text/size change (keep within 1px). **What counts is how it looks**: in the footer, English capitals as tall as the kanji looked bigger to him, so there the English is ~2.5px shorter than the kanji on purpose (about the kana height).
 - **Oct 4, 2026 changes:** (1) all covers the same size; he noticed the manga ones were shorter (they were 122×188 next to 140×198 anime). (2) Image maxed out at exactly 1000px: "i dont want the read more to appear but i do want to max out". `output.fill_to_max_height` makes `build.py` pick the cover height, so text/stat changes just make the covers a bit shorter or taller. (3) Every blue → **MAL blue** `#2e51a2`, except the 推し block → **gold**. (4) 神 crest: MAL-blue kanji on a **white** diamond (picked over blue on the dark diamond, which looked dim). (5) Footer: only the English got smaller; the Japanese size was fine. (6) 神 25% bigger (22.5px, picked over +15/+20%) and centred in the diamond, ~4px clear of the gold border.
+- **Oct 5, 2026 changes:** (1) name in **gold** ("i want to see if i like it that way" → kept it) and the bar under it gold too (MAL-blue tip stays). (2) all three bars **white**. (3) 神 bigger again, "without touching the gold borders": 25.5px is the largest that keeps a clear white gap (~2.7px). (4) the anime + manga list pages got the same design (below).
 - **Section titles are bold:** TOP ANIME / TOP MANGA use bold Anton ("they are titles technically").
 - **STATS matches the numbers' size** so it doesn't lose impact; stats labels big enough to notice what the numbers mean, but not competing with them.
 - Captions must wrap rather than cut off ("why didn't it just wrap to 2 lines?").
@@ -71,3 +72,33 @@ Fonts (bundled in `assets/fonts/`): **Anton** (display + titles), **Share Tech M
 ## Profile picture
 
 Ryo Asuka (Devilman Crybaby), `profile_picture/`. Bordered version = 10px `#15151c` border on the 800px image, which shows as ~3px at MAL's 225px avatar size — matching the poster frames. The bordered version is live (checked Oct 3, 2026).
+
+## List pages (anime + manga), since Oct 5, 2026
+
+Same design on MAL's **Modern** list (Default Theme + one `@\import` line; see MAL_TECH_NOTES.md). He asked for it to "follow the same design we have for my profile so its consistent", remembering all his profile preferences, and left Modern vs Classic to Claude.
+
+Top to bottom:
+1. **Header bar** = the profile's: gold top line, white bar, 神 crest + MYANIMELIST (`header.png`), gold dashed rule. MAL's "Viewing <user>'s Anime List ▾" menu moved next to the title (Satsuki covers the right side).
+2. **Banner** (`anime_banner.png` / `manga_banner.png`, rebuilt daily): the username in gold + gold bar, title pair **鑑賞記録 ANIME LIST** / **読書記録 MANGA LIST** (gold Japanese + gray English, same sizes as the motto, measured equal), chips (● STATUS: ACTIVE · ANIME ▸ COMPLETED n · MEAN SCORE ★ x.xx | MANGA ▸ VOLUMES n · MEAN SCORE ★ x.xx), Satsuki popping out over the header bar, the 鬼龍院皐月 name tag.
+3. **Tabs**: white band between black lines, Anton capitals; the active tab is a gold flag with white text (like 推し), hover = gold text.
+4. **Title band** = the 推し FAVORITES bar: gold flag with a Japanese label + the English tab title (same visible height, measured), stats/filter links on the right.
+5. **Sort bar**: "▸ SORT" (MAL blue) + MAL's sort links in mono capitals.
+6. **Entries = poster cards like TOP ANIME**: 6 per row, 152px black-framed covers with the soft offset shadow and sheen, gold number badge with white digits (01, 02 …), a coloured strip along the bottom of the cover for the status, a white ★ score chip (hidden when unscored), title in black mono capitals (wraps, never cut), then type · progress (or CH · VOL for manga) in gray. Edit/Add · More appear on hover.
+7. **Footer** = the profile's quote bar (`footer.png`), then MAL's own footer, made quiet.
+
+Status strip colours: watching/reading **green** `#22c55e` · completed **MAL blue** `#2e51a2` · on hold **gold** · dropped **gray** `#6b7180` (red stays retired) · plan to watch/read **light gray** `#c3c8d2`.
+
+| Tab | Japanese label | Reading | Meaning |
+|---|---|---|---|
+| All Anime | 鑑賞記録 | kanshō kiroku | viewing log (same as TOP ANIME) |
+| All Manga | 読書記録 | dokusho kiroku | reading log (same as TOP MANGA) |
+| Currently Watching | 視聴中 | shichō-chū | watching now |
+| Currently Reading | 読書中 | dokusho-chū | reading now |
+| Completed (anime) | 完走 | kansō | finished the run |
+| Completed (manga) | 読了 | dokuryō | finished reading |
+| On Hold | 保留 | horyū | on hold |
+| Dropped | 中断 | chūdan | stopped |
+| Plan to Watch | 視聴予定 | shichō yotei | planned viewing |
+| Plan to Read | 読書予定 | dokusho yotei | planned reading |
+
+Decided against / later: a **rows** version (compact rows with small covers) — MAL pages can only show one look and CSS can't add a switch, so it would replace the grid for everyone (or need a personal bookmark link); skipped for now (Oct 5, 2026).
