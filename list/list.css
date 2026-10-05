@@ -1,0 +1,206 @@
+/*
+  MAL Profile Kit — list design (MyAnimeList Modern list, anime + manga).
+  Same look as the About Me image: white page, flat white bars with gold dashes and black lines, the 神 crest,
+  Satsuki popping out of the banner into the header, gold rank badges with white numbers, black-framed covers,
+  mono captions. The bar colours come from theme.css, which build.py writes from config.json > theme (white or black
+  bars, same switches as the profile).
+
+  How it's loaded: MAL > Settings > List Style Design > Modern > Default Theme > "Add Custom CSS" holds one line
+      @\import "https://git-matthew.github.io/mal-profile/list/list.css";
+  (MAL blocks a plain @import; the backslash form gets past its filter and browsers still read it.)
+  GitHub Actions rebuilds the banners, the cover rules and this file every day, so nothing on MAL needs touching.
+  The anime and manga lists share this file: body.anime / body.manga tell them apart.
+*/
+@import url("theme.css");
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@900&family=Oswald:wght@400;500;600&family=Share+Tech+Mono&display=swap");
+@import url("anime_covers.css");
+@import url("manga_covers.css");
+
+:root{
+  --ink:#15151c; --gold:#d7a736; --blue:#2e51a2; --green:#22c55e;
+  --line:#d6dce8; --mut:#707884; --card:#eef1f6;
+  --mono:"Share Tech Mono",monospace; --anton:"Anton",Impact,sans-serif; --jp:"Noto Sans JP",sans-serif;
+  --W:1060px;                      /* page width (MAL's own) */
+  --coverH:214px;                  /* 152px-wide covers at MAL's 225x317 cover ratio */
+}
+
+/* ------------------------------------------------------------------ page */
+body.ownlist{background:#fff !important;background-image:none !important;color:var(--ink);font-family:var(--mono)}
+body.ownlist a{color:var(--ink)}
+body.ownlist a:hover{color:var(--blue)}
+
+/* ------------------------------------------------------------------ header bar: gold top line, gold dashed rule (like the profile) */
+body.ownlist .header{width:auto;height:65px;margin:0;border-top:5px solid var(--gold);background:var(--hdr-bg,#fff)}
+body.ownlist .header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px)}
+body.ownlist .header .header-title{top:0;left:max(0px,calc(50% - 530px));width:300px;height:65px;
+  background:url("header.png") left top/300px 62px no-repeat}
+body.ownlist .header .header-menu{top:15px;right:auto;left:calc(max(0px,calc(50% - 530px)) + 318px);z-index:30;text-align:left}
+body.ownlist .header .header-menu .btn-menu{text-align:left;font:400 14px/1.2 var(--mono);letter-spacing:.06em;color:var(--hdr-sub,#707884)}
+body.ownlist .header .header-menu .btn-menu a{color:var(--hdr-text,#15151c);font-weight:400}
+body.ownlist .header .header-menu .btn-menu a.username{color:var(--gold)}
+body.ownlist .header .header-menu .header-info{margin:5px 0 0;text-align:left;font:400 11px/1 var(--mono);letter-spacing:.08em;color:var(--hdr-dim,#b9bfca)}
+body.ownlist .header .header-menu .header-info a{color:var(--hdr-sub,#707884);font-weight:400}
+body.ownlist .header .header-menu .list-menu{right:auto;left:0;border:2px solid var(--ink);box-shadow:3px 3px 0 rgba(20,20,26,.13)}
+body.ownlist .header .header-menu .list-menu .icon-menu{color:var(--ink);font:400 13px/1 var(--mono);letter-spacing:.06em}
+body.ownlist .header .header-menu .list-menu .icon-menu:hover{background:var(--gold);color:#fff}
+body.ownlist .header .header-menu .list-menu .icon-menu svg.icon{fill:var(--ink)}
+body.ownlist .header .header-menu .list-menu .icon-menu:hover svg.icon{fill:#fff}
+
+/* ------------------------------------------------------------------ container + banner (Satsuki rises into the header bar) */
+body.ownlist .list-container{width:var(--W);border:0;background:#fff}
+body.ownlist .cover-block{position:relative;width:var(--W);height:260px;margin:0}
+body.ownlist .cover-block .image-container{display:none !important}
+body.ownlist .cover-block::before{content:"";position:absolute;left:0;bottom:0;width:var(--W);height:330px;z-index:20;pointer-events:none;
+  background:url("anime_banner.png") center bottom/var(--W) 330px no-repeat}
+body.manga .cover-block::before{background-image:url("manga_banner.png")}
+
+/* ------------------------------------------------------------------ status tabs: the active one is a gold flag like 推し */
+body.ownlist .status-menu-container{position:relative;width:var(--W);height:auto;background:#fff;border:0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+body.ownlist .status-menu-container.fixed{position:fixed;z-index:25;box-shadow:0 3px 0 rgba(20,20,26,.08)}
+body.ownlist .status-menu-container .status-menu{display:flex;justify-content:center;gap:2px;margin:0 auto;border-spacing:0}
+body.ownlist .status-menu-container .status-menu .status-button{display:block;padding:13px 15px 11px;font:400 15px/1 var(--anton);
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink);transition:color .2s}
+body.ownlist .status-menu-container .status-menu .status-button:hover{color:var(--gold)}
+body.ownlist .status-menu-container .status-menu .status-button.on{background:var(--gold);color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.28)}
+body.ownlist .status-menu-container .status-menu .status-button::after{display:none}
+body.ownlist .status-menu-container .search-container{top:0;right:18px}
+body.ownlist .status-menu-container .search-container #search-button{margin-top:12px;color:var(--ink);font-size:15px}
+body.ownlist .status-menu-container .search-container #search-box{margin-top:9px}
+body.ownlist .status-menu-container .search-container #search-box input{border:1.5px solid var(--ink);font:400 12px var(--mono);padding:0 6px}
+
+/* ------------------------------------------------------------------ title band: like the profile's 推し FAVORITES bar */
+body.ownlist .list-block{margin-top:24px}
+body.ownlist .list-unit{width:1024px}
+body.ownlist .list-unit .list-status-title{display:flex;align-items:stretch;width:auto;height:auto;background:var(--band-bg,#fff);
+  border-top:2px solid var(--band-line,#15151c);border-bottom:2px solid var(--band-line,#15151c)}
+body.ownlist .list-unit .list-status-title::before{display:flex;align-items:center;padding:0 12px;background:var(--gold);color:#fff;
+  text-shadow:0 1px 1px rgba(0,0,0,.28);font:900 17.5px/1 var(--jp)}
+body.ownlist .list-unit .list-status-title .text{display:flex;align-items:center;width:auto;height:auto;padding:12px 14px 11px;
+  font:400 19px/1 var(--anton);letter-spacing:.1em;color:var(--band-text,#15151c);text-align:left;position:relative;top:1px}
+body.ownlist .list-unit .list-status-title .stats{top:0;right:10px;height:100%;line-height:normal;display:flex;align-items:center}
+body.ownlist .list-unit .list-status-title .stats a{color:var(--band-text,#15151c);font:400 11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+body.ownlist .list-unit .list-status-title .stats a:hover{color:var(--gold)}
+body.ownlist .list-unit .list-stats{width:auto;background:#fff;color:var(--ink);border:2px solid var(--ink);border-top:0;font:400 12px/30px var(--mono)}
+/* Japanese for each tab (same visible height as the English, like 推し / FAVORITES) */
+body.anime .list-unit.all_anime .list-status-title::before{content:"鑑賞記録"}
+body.manga .list-unit.all_anime .list-status-title::before,
+body.manga .list-unit.all_manga .list-status-title::before{content:"読書記録"}
+body.ownlist .list-unit.watching .list-status-title::before{content:"視聴中"}
+body.ownlist .list-unit.reading .list-status-title::before{content:"読書中"}
+body.anime .list-unit.completed .list-status-title::before{content:"完走"}
+body.manga .list-unit.completed .list-status-title::before{content:"読了"}
+body.ownlist .list-unit.onhold .list-status-title::before{content:"保留"}
+body.ownlist .list-unit.dropped .list-status-title::before{content:"中断"}
+body.ownlist .list-unit.plantowatch .list-status-title::before{content:"視聴予定"}
+body.ownlist .list-unit.plantoread .list-status-title::before{content:"読書予定"}
+
+/* ------------------------------------------------------------------ sort bar (the table header row) */
+body.ownlist .list-table{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:22px;row-gap:30px;
+  width:1024px;margin:0 auto;border:0;border-collapse:separate;counter-reset:mk}
+body.ownlist .list-table>tbody:first-child{grid-column:1/-1;display:block;background:transparent}
+body.ownlist .list-table .list-table-header{display:flex;align-items:center;gap:18px;padding:12px 2px 0;border-bottom:1px solid var(--line);margin-bottom:-6px}
+body.ownlist .list-table .list-table-header::before{content:"▸ SORT";font:400 11px/1 var(--mono);letter-spacing:.12em;color:var(--blue);padding-bottom:10px}
+body.ownlist .list-table .list-table-header .header-title{display:block;width:auto !important;height:auto;padding:0 0 10px;background:none;border:0;text-align:left}
+body.ownlist .list-table .list-table-header .header-title.status,
+body.ownlist .list-table .list-table-header .header-title.image{display:none}
+body.ownlist .list-table .list-table-header .header-title .link,
+body.ownlist .list-table .list-table-header .header-title .link.sort{font:400 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+body.ownlist .list-table .list-table-header .header-title .link.sort:hover{color:var(--gold)}
+body.ownlist .list-table .list-table-header .header-title .sort-icon{color:var(--blue)}
+
+/* ------------------------------------------------------------------ cards: the same poster cards as the profile's TOP ANIME row */
+body.ownlist .list-table>tbody.list-item{display:block;min-width:0;background:transparent;counter-increment:mk}
+body.ownlist .list-table .list-item .list-table-data{display:grid;grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:"img img" "ttl ttl" "a b";position:relative}
+body.ownlist .list-table .list-item .list-table-data .data{display:block;padding:0;border:0;text-align:left;vertical-align:top;
+  font:400 11px/1.3 var(--mono);color:var(--ink);min-width:0}
+/* cover: black frame + soft offset shadow; the hi-res art (anime_covers.css / manga_covers.css) sits over MAL's thumbnail */
+body.ownlist .list-table .list-item .data.image{grid-area:img;position:relative}
+body.ownlist .list-table .list-item .data.image a{display:block;position:relative;height:var(--coverH);border:2px solid var(--ink);
+  background:var(--card);overflow:hidden;box-shadow:3px 3px 0 rgba(20,20,26,.13)}
+body.ownlist .list-table .list-item .data.image .image{display:block;width:100%;height:100%;object-fit:cover;border:0}
+body.ownlist .list-table .list-item .data.image a::after{content:"";position:absolute;inset:0;background-size:cover;background-position:center}
+body.ownlist .list-table .list-item .data.image::after{content:"";position:absolute;inset:2px;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.14),transparent 30%,transparent 72%,rgba(0,0,0,.28))}
+/* gold number badge, white digits (01, 02 ... like the profile ranks) */
+body.ownlist .list-table .list-item .data.number{position:absolute;top:2px;left:2px;z-index:3;padding:4px 8px 3px;background:var(--gold);
+  font-size:0;line-height:0;color:#fff}
+body.ownlist .list-table .list-item .data.number::before{content:counter(mk,decimal-leading-zero);font:400 15px/1 var(--anton);
+  text-shadow:0 1px 1px rgba(0,0,0,.28)}
+/* status = coloured strip along the bottom of the cover */
+body.ownlist .list-table .list-item .data.status{position:absolute;left:2px;right:2px;top:calc(var(--coverH) - 7px);height:5px;z-index:3;
+  width:auto;padding:0}
+body.ownlist .list-table .list-item .data.status.watching,body.ownlist .list-table .list-item .data.status.reading{background:var(--green)}
+body.ownlist .list-table .list-item .data.status.completed{background:var(--blue)}
+body.ownlist .list-table .list-item .data.status.onhold{background:var(--gold)}
+body.ownlist .list-table .list-item .data.status.dropped{background:#6b7180}
+body.ownlist .list-table .list-item .data.status.plantowatch,body.ownlist .list-table .list-item .data.status.plantoread{background:#c3c8d2}
+/* score chip on the cover (hidden when unscored) */
+body.ownlist .list-table .list-item .data.score{position:absolute;right:7px;top:calc(var(--coverH) - 37px);z-index:4}
+body.ownlist .list-table .list-item .data.score .link{font:inherit}
+body.ownlist .list-table .list-item .data.score .score-label{display:flex;align-items:center;gap:4px;padding:4px 7px 3px;background:#fff;
+  border:1.5px solid var(--ink);font:400 14px/1 var(--anton);color:var(--ink);letter-spacing:.03em}
+body.ownlist .list-table .list-item .data.score .score-label::before{content:"★";color:var(--gold);font:400 11px/1 var(--mono)}
+body.ownlist .list-table .list-item .data.score .score-label.score-na{display:none}
+/* title + small details */
+body.ownlist .list-table .list-item .data.title{grid-area:ttl;padding:9px 0 0;word-wrap:break-word}
+body.ownlist .list-table .list-item .data.title .link{font:400 11.5px/1.3 var(--mono);letter-spacing:.02em;text-transform:uppercase;color:var(--ink)}
+body.ownlist .list-table .list-item .data.title .link:hover{color:var(--blue);text-decoration:none}
+body.ownlist .list-table .list-item .data.title .icon-watch2{display:none}
+body.ownlist .list-table .list-item .data.title .rewatching,body.ownlist .list-table .list-item .data.title .rereading,
+body.ownlist .list-table .list-item .data.title .content-status{color:var(--gold);font:400 10px/1.3 var(--mono);text-transform:uppercase}
+body.ownlist .list-table .list-item .data.title .add-edit-more{position:absolute;top:6px;right:6px;z-index:5;float:none;margin:0;padding:3px 6px;
+  background:var(--ink);font:400 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#5d6472;opacity:0;transition:opacity .15s}
+body.ownlist .list-table .list-item .data.title .add-edit-more a{color:#fff}
+body.ownlist .list-table .list-item .data.title .add-edit-more a:hover{color:var(--gold)}
+body.ownlist .list-table .list-item:hover .data.title .add-edit-more{opacity:1}
+body.ownlist .list-table .list-item .data.title .notes{width:auto;color:var(--mut);font-size:10px}
+body.ownlist .list-table .list-item .data.type,
+body.ownlist .list-table .list-item .data.chapter{grid-area:a;padding:5px 0 0;color:var(--mut);font-size:10.5px;text-transform:uppercase;white-space:nowrap}
+body.ownlist .list-table .list-item .data.progress,
+body.ownlist .list-table .list-item .data.volume{grid-area:b;padding:5px 0 0;color:var(--mut);font-size:10.5px;text-transform:uppercase}
+body.ownlist .list-table .list-item .data.type::after,
+body.ownlist .list-table .list-item .data.chapter::after{content:"·";margin:0 6px;color:#b9bfca}
+body.manga .list-table .list-item .data.chapter > div::before{content:"CH ";color:#9aa2b1}
+body.manga .list-table .list-item .data.volume > div::before{content:"VOL ";color:#9aa2b1}
+body.ownlist .list-table .list-item .data.progress > div,
+body.ownlist .list-table .list-item .data.chapter > div,
+body.ownlist .list-table .list-item .data.volume > div{display:inline}
+body.ownlist .list-table .list-item .data.progress a,body.ownlist .list-table .list-item .data.chapter a,
+body.ownlist .list-table .list-item .data.volume a{color:var(--ink)}
+body.ownlist .list-table .list-item .icon-add-episode,body.ownlist .list-table .list-item .icon-add-chapter,
+body.ownlist .list-table .list-item .icon-add-volume{color:var(--gold);margin-left:4px}
+/* any extra columns turned on in MAL's list settings: small full-width lines */
+body.ownlist .list-table .list-item .data.tags,body.ownlist .list-table .list-item .data.rated,
+body.ownlist .list-table .list-item .data.started,body.ownlist .list-table .list-item .data.finished,
+body.ownlist .list-table .list-item .data.days,body.ownlist .list-table .list-item .data.storage,
+body.ownlist .list-table .list-item .data.retail,body.ownlist .list-table .list-item .data.priority,
+body.ownlist .list-table .list-item .data.popularity{grid-column:1/-1;padding-top:3px;color:var(--mut);font-size:10px}
+body.ownlist .list-table .list-item .more-info{border:0}
+body.ownlist .list-table .list-item .more-info .more-content{display:block;padding:8px 0 0;font:400 10.5px/1.4 var(--mono);color:var(--mut)}
+body.ownlist .list-unit .loading-space{grid-column:1/-1;color:var(--gold)}
+
+/* ------------------------------------------------------------------ footer: the profile's quote bar */
+body.ownlist .list-container::after{content:"";display:block;height:46px;margin-top:44px;border-bottom:2px solid var(--foot-line,#15151c);
+  background:url("footer.png") center 10px/420px 30px no-repeat,
+    repeating-linear-gradient(90deg,var(--gold) 0 26px,transparent 26px 40px) left top/100% 3px no-repeat,var(--foot-bg,#fff)}
+
+/* MAL's own site footer under it: quiet, on white */
+body.ownlist #footer-block{background:#fff;color:var(--mut);font-family:var(--mono);padding:16px 0 20px}
+body.ownlist #copyright{color:var(--mut);font-size:11px;letter-spacing:.04em}
+body.ownlist #recaptcha-terms,body.ownlist #recaptcha-terms a{color:#9aa2b1}
+
+/* ------------------------------------------------------------------ floating menu + filter panel in the same colours */
+body.ownlist .list-menu-float{border:2px solid var(--ink);background:#fff}
+body.ownlist .list-menu-float .icon-menu{background-color:#fff}
+body.ownlist .list-menu-float .icon-menu svg.icon{fill:var(--ink)}
+body.ownlist .list-menu-float .icon-menu:not(.profile):hover{background-color:var(--gold)}
+body.ownlist .list-menu-float .icon-menu:hover svg.icon{fill:#fff}
+body.ownlist .list-menu-float .icon-menu .text{font:400 13px/1.6 var(--mono);letter-spacing:.06em;text-transform:uppercase}
+body.ownlist .list-menu-float .icon-menu.setting:hover .text .link-list-setting,
+body.ownlist .list-menu-float .icon-menu.setting:hover .text .link-style-setting{background-color:var(--gold)}
+body.ownlist #advanced-options{background:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 rgba(20,20,26,.13);font-family:var(--mono)}
+body.ownlist #advanced-options .btn-apply,body.ownlist #advanced-options .btn-clear{background:var(--ink);border-radius:0}
+body.ownlist #advanced-options .btn-apply:hover,body.ownlist #advanced-options .btn-clear:hover{background:var(--gold)}
+body.ownlist #advanced-options .sort-widget input[type=radio]:checked + label{background:var(--gold);border-color:var(--gold)}
