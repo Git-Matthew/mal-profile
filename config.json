@@ -13,8 +13,8 @@
   "hero": {
     "_display_name_note": "Leave empty to show your MAL username in capitals.",
     "display_name": "",
-    "_name_color_note": "\"ink\" (black) or \"gold\" (gold name + gold bar under it). Used by the profile image and the list banners.",
-    "name_color": "gold",
+    "_name_color_note": "\"ink\" (black), \"gold\" (gold name + gold bar under it) or \"bar\" (black name + gold bar). Used by the profile image and the list banners.",
+    "name_color": "bar",
     "tagline_jp": "神のお気に入り",
     "tagline_en": "God's Favourite",
     "status_text": "ACTIVE",

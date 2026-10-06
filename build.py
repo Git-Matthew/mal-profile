@@ -200,11 +200,11 @@ def font_faces():
 
 
 def name_class(cfg):
-    """hero.name_color in config.json: "ink" (black, the original) or "gold" (name + the bar under it)."""
+    """hero.name_color in config.json: "ink" (black, the original), "gold" (name + the bar under it) or "bar" (black name, gold bar)."""
     v = str(cfg.get("hero", {}).get("name_color", "ink")).lower()
-    if v not in ("ink", "gold"):
-        sys.exit(f'config.json hero.name_color must be "ink" or "gold" (got "{v}")')
-    return " name-gold" if v == "gold" else ""
+    if v not in ("ink", "gold", "bar"):
+        sys.exit(f'config.json hero.name_color must be "ink", "gold" or "bar" (got "{v}")')
+    return {"gold": " name-gold", "bar": " name-bar"}.get(v, "")
 
 
 def card(rank, img_path, caption, cls):
