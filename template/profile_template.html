@@ -46,6 +46,8 @@ ${FONT_FACES}
   /* hero.name_color = "gold" in config.json: gold name and gold bar under it (the MAL-blue tip stays) */
   body.name-gold .name{color:var(--gold)}
   body.name-gold .underbar{background:var(--gold)}
+  /* hero.name_color = "bar": black name, gold bar under it (Oct 6, 2026) */
+  body.name-bar .underbar{background:var(--gold)}
   .title{display:flex;align-items:baseline;gap:10px;margin-top:14px}
   /* Japanese + English pairs: sizes and 1-2px nudges are tuned so both show the SAME visible height
      (measured on the render; Matthew's rule). Re-check with tools/measure_pairs.py after changing fonts/sizes. */
