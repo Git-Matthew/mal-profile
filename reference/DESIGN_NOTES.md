@@ -22,7 +22,7 @@ Top to bottom:
 | Token | Hex | Use |
 |---|---|---|
 | ink | `#15151c` | frames, text, the lines on the white bars |
-| gold | `#d7a736` | top line, dashes, crest border, **name + the bar under it**, motto, rank badges, 推し block, stars |
+| gold | `#e4cc7a` (pale gold, Ryo's hair; was `#d7a736` until Oct 6, 2026) | top line, dashes, crest border, **name + the bar under it**, motto, rank badges, 推し block, stars |
 | blue | `#2e51a2` | MyAnimeList's own blue (its nav bar): 神 kanji, underbar tip, ▸ row arrows |
 | green | `#22c55e` | "online" status dot |
 | white | `#ffffff` | backgrounds (pure white — no tints) |
