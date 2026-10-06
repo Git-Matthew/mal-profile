@@ -18,7 +18,7 @@
 @import url("manga_covers.css");
 
 :root{
-  --ink:#15151c; --gold:#d7a736; --blue:#2e51a2; --green:#22c55e;
+  --ink:#15151c; --gold:#e4cc7a; --blue:#2e51a2; --green:#22c55e;
   --line:#d6dce8; --mut:#707884; --card:#eef1f6;
   --mono:"Share Tech Mono",monospace; --anton:"Anton",Impact,sans-serif; --jp:"Noto Sans JP",sans-serif;
   --W:1060px;                      /* page width (MAL's own) */
