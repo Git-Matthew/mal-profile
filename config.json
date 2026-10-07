@@ -94,9 +94,9 @@
   "theme": {
     "_note": "Each piece is \"dark\" (ink background, white text: the original look) or \"light\" (white background, black text). Gold accents stay gold either way.",
     "header_bar":    "light",
-    "favorites_bar": "light",
+    "favorites_bar": "dark",
     "stats_box":     "light",
-    "footer_bar":    "light",
+    "footer_bar":    "dark",
     "_stats_labels_note": "Only for the white (light) stats box: \"gray\" or \"black\" labels.",
     "stats_labels":  "black",
     "_captions_note": "Titles under the covers: \"gray\" or \"black\".",
