@@ -59,6 +59,8 @@ body.ownlist .header .header-menu .list-menu .icon-menu:hover svg.icon{fill:#fff
 
 /* ------------------------------------------------------------------ container + banner (Satsuki rises into the header bar) */
 body.ownlist .list-container{box-sizing:content-box;width:var(--W);border:2px solid var(--ink);border-top:0;border-bottom:0;background:#fff}
+/* the profile's faint scanline texture (same as under its Favorites) behind the poster grid (Oct 8, 2026) */
+body.ownlist .list-container{background-color:#fff;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.015) 0 1px,transparent 1px 3px)}
 body.ownlist .cover-block{position:relative;width:var(--W);height:260px;margin:0}
 body.ownlist .cover-block .image-container{display:none !important}
 body.ownlist .cover-block::before{content:"";position:absolute;left:0;bottom:0;width:var(--W);height:328px;z-index:20;pointer-events:none;
