@@ -1,0 +1,2 @@
+/* Bar colours for list.css, written by build.py from config.json > theme (light = white bars). */
+:root{--hdr-bg:#fff;--hdr-text:#15151c;--hdr-sub:#707884;--hdr-dim:#b9bfca;--band-bg:#15151c;--band-text:#fff;--band-line:transparent;--foot-bg:#15151c;--foot-line:transparent}
