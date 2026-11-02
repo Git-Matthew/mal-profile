@@ -49,8 +49,8 @@
     "_note": "In rank order. Max 5 anime and 5 manga. 1-3 manga = stats card sits beside them; 4-5 manga = full row + stats strip below. mal_id comes from the MAL URL (myanimelist.net/anime/<id>/...) or: python build.py find \"title\" --type manga",
     "anime": [
       { "mal_id": 35120, "caption": "Devilman Crybaby" },
-      { "mal_id": 18679, "caption": "Kill la Kill" },
       { "mal_id": 39535, "caption": "Mushoku Tensei" },
+      { "mal_id": 18679, "caption": "Kill la Kill" },
       { "mal_id": 32182, "caption": "Mob Psycho 100" },
       { "mal_id": 37521, "caption": "Vinland Saga" }
     ],
