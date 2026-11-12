@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+${FONTS}
+:root{--ink:${INK};--gold:${GOLD};--blue:${BLUE};--green:${GREEN};--mut:#707884;--line:#eef0f6}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:transparent}
+.c{width:600px;height:150px;position:relative;overflow:hidden;background:#fff;border:2px solid var(--ink);
+ background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:14px 14px;font-family:"KitOswald"}
+.top{position:absolute;left:0;right:0;top:0;height:5px;background:var(--gold)}
+.art{position:absolute;right:0;top:0;width:330px;height:150px;background:url("${ART}") 38% 28%/560px auto no-repeat;-webkit-mask:linear-gradient(90deg,transparent,#000 30%)}
+.dia{position:absolute;left:20px;top:20px;width:30px;height:30px;border:2px solid var(--gold);transform:rotate(45deg);display:flex;align-items:center;justify-content:center;background:#fff}
+.dia b{transform:rotate(-45deg);font-family:"KitJP";font-weight:900;color:var(--blue);font-size:17px}
+.name{position:absolute;left:64px;top:12px;font-family:"KitAnton";font-size:46px;line-height:1;letter-spacing:1px;color:var(--ink)}
+.mono{font-family:"KitMono";font-size:10px;letter-spacing:1.5px;color:var(--mut)}
+.id{position:absolute;left:66px;top:62px}.id .st{color:var(--gold)}
+.box{position:absolute;left:20px;top:84px;width:300px;height:52px;border:1.5px solid var(--ink);background:#fff;display:flex;align-items:center}
+.play{width:48px;height:100%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.in{padding:0 12px;flex:1;min-width:0}
+.row{display:flex;justify-content:space-between}
+.lab{font-family:"KitMono";font-size:10px;letter-spacing:1.5px;color:var(--blue);font-weight:700}
+.lab i{font-style:normal;color:var(--green)}
+.ttl{font-family:"KitOswald";font-weight:600;font-size:16px;line-height:19px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pb{height:5px;margin-top:4px;background:#e3e6ee;position:relative}.pb i{position:absolute;left:0;top:0;bottom:0;width:${PCT}%;background:var(--gold)}
+</style></head><body><div class="c"><div class="top"></div><div class="art"></div>
+<div class="dia"><b>神</b></div><div class="name">${NAME}</div>
+<div class="mono id">${IDTXT} // <span class="st">${STARS}</span></div>
+<div class="box"><div class="play">▶</div><div class="in">
+<div class="row"><span class="lab">${LABEL} <i>●</i></span><span class="mono">${EP}</span></div>
+<div class="ttl">${TITLE}</div><div class="pb"><i></i></div></div></div>
+</div></body></html>
