@@ -474,6 +474,40 @@ def build_list_assets(cfg, stats, lists):
 
 
 # ----------------------------------------------------------------- main
+def build_signature(cfg, lists):
+    """Forum signature (600x150, MAL's max): name card + the anime most recently updated in Watching."""
+    sc = cfg.get("signature", {})
+    if not sc.get("enabled", True):
+        return
+    watching = [x for x in lists["anime"] if x.get("status") == 1]
+    pick = max(watching, key=lambda x: x.get("updated_at") or 0) if watching else None
+    if pick:
+        title = pick.get("anime_title_eng") or pick.get("anime_title")
+        seen, total = pick.get("num_watched_episodes") or 0, pick.get("anime_num_episodes") or 0
+        ep = f"EP {seen:02d}/{total:02d}" if total else f"EP {seen:02d}/?"
+        pct = round(100 * seen / total) if total else 50
+        label = "NOW WATCHING"
+    else:
+        title, ep, pct, label = sc.get("idle_text", "Nothing right now"), "", 0, "NOW WATCHING"
+    hd, c, hero = cfg["header"], cfg["colors"], cfg["hero"]
+    name = (hero.get("display_name") or cfg["mal_username"]).upper()
+    tpl = Template((ROOT / "template" / "signature_template.html").read_text(encoding="utf-8"))
+    html = tpl.substitute(FONTS=font_faces(), INK=c["ink"], GOLD=c["gold"], BLUE=c["blue"], GREEN=c["green"],
+                          ART=(ROOT / sc.get("image", "assets/character/satsuki_banner.jpg")).resolve().as_uri(),
+                          NAME=esc(name), IDTXT=esc(hd.get("number", "")), STARS="★" * hd.get("stars", 5),
+                          LABEL=label, EP=ep, TITLE=esc(title), PCT=pct)
+    out = ROOT / "output" / "list"
+    out.mkdir(parents=True, exist_ok=True)
+    hp = out / "signature.html"
+    hp.write_text(html, encoding="utf-8")
+    png = out / "signature.png"
+    render_transparent(hp, png, 600, 150)
+    im = Image.open(png).convert("RGB").resize((600, 150), Image.LANCZOS)
+    im.save(png, optimize=True)
+    hp.unlink()
+    print(f"  signature: {title} {ep} -> {png}")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Rebuild the MAL About Me image from config.json")
     ap.add_argument("cmd", nargs="?", default="build", choices=["build", "find"])
@@ -533,6 +567,7 @@ def main():
 
     if cfg.get("lists", {}).get("enabled", True) and not a.no_list:
         build_list_assets(cfg, stats, lists)
+        build_signature(cfg, lists)
 
     png = out / f"{cfg['output']['basename']}.png"
     w, h = render(html_path, png)
