@@ -57,7 +57,9 @@
     "manga": [
       { "mal_id": 62887,  "caption": "All You Need Is Kill" },
       { "mal_id": 99969,  "caption": "My Lesbian Experience with Loneliness" },
-      { "mal_id": 145863, "caption": "Goodbye, Eri" }
+      { "mal_id": 145863, "caption": "Goodbye, Eri" },
+      { "mal_id": 29,     "caption": "Paradise Kiss" },
+      { "mal_id": 116778, "caption": "Chainsaw Man" }
     ]
   },
 
